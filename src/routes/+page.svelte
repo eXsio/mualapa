@@ -1,2 +1,15 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<script>
+    import {Collection, SignedIn} from "sveltefire";
+</script>
+
+<h1>Welcome to MUALApka!</h1>
+
+<SignedIn>
+  <Collection ref="mualas" let:data={mualas}>
+    {#each mualas as muala}
+      <h2>{muala.name}</h2>
+      <p>{muala.episodeUrl}</p>
+    {/each}
+  </Collection>
+
+</SignedIn>
