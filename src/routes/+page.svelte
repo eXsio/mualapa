@@ -11,5 +11,4 @@
       <p>{muala.episodeUrl}</p>
     {/each}
   </Collection>
-
 </SignedIn>
