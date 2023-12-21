@@ -27,7 +27,10 @@
     }
 
     async function loginWithGoogle() {
-        const provider = new GoogleAuthProvider();
+        await loginWith(new GoogleAuthProvider());
+    }
+
+    async function loginWith(provider) {
         await signInWithPopup(auth, provider)
             .then((result) => {
 
@@ -36,6 +39,9 @@
                 return error;
             });
     }
+
+    import { page } from '$app/stores';
+    $: activeUrl = $page.url.pathname;
 </script>
 
 {#if !loaded}
@@ -47,7 +53,7 @@
 <FirebaseApp {auth} {firestore}>
   <Navbar>
     <NavBrand href="/">
-      <span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white ml-3" style="color: #F38713;">MUALAppka</span>
+      <span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white ml-3 main-color">MUALAppka</span>
     </NavBrand>
 
     <SignedIn let:user let:signOut>
@@ -57,7 +63,7 @@
       </div>
       <Dropdown placement="bottom" triggeredBy="#avatar-menu" style="z-index: 1000">
         <DropdownHeader>
-          <span class="block text-sm" style="color: #F38713; font-weight: bold">{user.displayName}</span>
+          <span class="block text-sm main-color" style="font-weight: bold">{user.displayName}</span>
         </DropdownHeader>
         <DropdownDivider/>
         <DropdownItem on:click={signOut}>
@@ -82,9 +88,9 @@
       </Dropdown>
     </SignedOut>
 
-    <NavUl>
-      <NavLi href="/" active={true}>Miejsca</NavLi>
-      <NavLi href="/about">O co tu chodzi?</NavLi>
+    <NavUl {activeUrl}>
+      <NavLi href="/" active={true}>Zobacz Miejsca</NavLi>
+      <NavLi href="/about">Co tu się odpierMUALA?</NavLi>
     </NavUl>
   </Navbar>
 
