@@ -1,29 +1,94 @@
 <script lang="ts">
     import '../app.pcss';
+    import 'leaflet/dist/leaflet.css';;
     import {goto} from '$app/navigation';
     import {auth, firestore, initializeFirebase} from '$lib/firebase.client';
     import {FirebaseApp, SignedIn, SignedOut} from "sveltefire";
-    import { Alert } from 'flowbite-svelte';
-    import { browser } from '$app/environment';
+    import {ArrowLeftToBracketOutline} from 'flowbite-svelte-icons';
+    import {browser} from '$app/environment';
+    import {Spinner} from 'flowbite-svelte';
+    import {
+        Navbar,
+        NavBrand,
+        NavLi,
+        NavUl,
+        NavHamburger,
+        Avatar,
+        Dropdown,
+        DropdownItem,
+        DropdownHeader,
+        DropdownDivider
+    } from 'flowbite-svelte';
+    import {GoogleAuthProvider, signInWithPopup} from "firebase/auth";
+
+    let loaded: boolean = false;
     if (browser) {
-        initializeFirebase();
+        loaded = initializeFirebase();
+    }
+
+    async function loginWithGoogle() {
+        const provider = new GoogleAuthProvider();
+        await signInWithPopup(auth, provider)
+            .then((result) => {
+
+            })
+            .catch((error) => {
+                return error;
+            });
     }
 </script>
 
+{#if !loaded}
+  <div class="loader">
+    <Spinner size="12"></Spinner>
+  </div>
+{/if}
+
 <FirebaseApp {auth} {firestore}>
-  <div class="p-8">
+  <Navbar>
+    <NavBrand href="/">
+      <span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white ml-3" style="color: #F38713;">MUALAppka</span>
+    </NavBrand>
+
     <SignedIn let:user let:signOut>
-      <Alert color="green">
-        <p>Howdy, {user.displayName}</p>
-        <button on:click={signOut}>Sign Out</button>
-      </Alert>
+      <div class="flex items-center md:order-2" >
+        <Avatar id="avatar-menu" src="{user.photoURL ?? ''}" referrerPolicy="no-referrer"/>
+        <NavHamburger class1="w-full md:flex md:w-auto md:order-1"/>
+      </div>
+      <Dropdown placement="bottom" triggeredBy="#avatar-menu" style="z-index: 1000">
+        <DropdownHeader>
+          <span class="block text-sm" style="color: #F38713; font-weight: bold">{user.displayName}</span>
+        </DropdownHeader>
+        <DropdownDivider/>
+        <DropdownItem on:click={signOut}>
+          <div style="display: flex;">
+            <ArrowLeftToBracketOutline size="sm" class="mt-1"/>
+            <span class="ml-3"> Wyloguj się</span></div>
+        </DropdownItem>
+      </Dropdown>
     </SignedIn>
-    <SignedOut let:auth>
-      <Alert>
-        You are Signed Out!
-      <button on:click={() => goto('/login')}>Sign In</button>
-      </Alert>
+
+    <SignedOut>
+      <div class="flex items-center md:order-2 z-10">
+        <Avatar id="avatar-menu"/>
+        <NavHamburger class1="w-full md:flex md:w-auto md:order-1"/>
+      </div>
+      <Dropdown placement="bottom" triggeredBy="#avatar-menu"  style="z-index: 1000">
+        <DropdownItem on:click={loginWithGoogle}>
+          <div style="display: flex;">
+            <Avatar size="xs" id="google-login" src="google.png"/>
+            <span class="ml-3">Zaloguj się z Google</span></div>
+        </DropdownItem>
+      </Dropdown>
     </SignedOut>
-    <slot/>
+
+    <NavUl>
+      <NavLi href="/" active={true}>Miejsca</NavLi>
+      <NavLi href="/about">O co tu chodzi?</NavLi>
+    </NavUl>
+  </Navbar>
+
+  <div class="p-8" style="display: flex; flex-direction: column; flex-grow: 100; height: 100%">
+    <slot auth="{auth}" firestore="{firestore}"/>
   </div>
 </FirebaseApp>

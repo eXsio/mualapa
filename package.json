@@ -28,6 +28,10 @@
     "firebase": "^9.23.0",
     "flowbite": "^2.2.1",
     "flowbite-svelte": "^0.44.20",
+    "flowbite-svelte-icons": "^0.4.5",
+    "leaflet": "^1.9.4",
+    "rollup-plugin-postcss": "^4.0.2",
+    "svelte-leafletjs": "^0.10.0",
     "sveltefire": "^0.4.3"
   }
 }

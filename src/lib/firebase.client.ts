@@ -21,7 +21,7 @@ const firebaseConfig: FirebaseOptions = {
     appId: env.PUBLIC_APP_ID
 };
 
-export const initializeFirebase = (): void => {
+export const initializeFirebase = (): boolean => {
     if (!browser) {
         throw new Error("Can't use the Firebase client on the server.");
     }
@@ -30,4 +30,5 @@ export const initializeFirebase = (): void => {
         auth = getAuth(app);
         firestore = getFirestore(app);
     }
+    return true;
 };
